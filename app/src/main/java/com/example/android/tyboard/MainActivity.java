@@ -7,12 +7,13 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.example.android.tyboard.data.JsonStore;
 import com.example.android.tyboard.utils.JsonUtils;
 import com.example.android.tyboard.utils.NetUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements LoaderCallbacks<String[]> {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<JsonStore> {
 
     private static final int FORECAST_LOADER_ID = 0;
 
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
 
     private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
     private static final String DESTINATION = "Brightcove, San Francisco";
-    private static final String[] VISUAL_DICT = {"Length: ", "Normal Duration: ", "Duration now: ", "Best Route: "};
+    private static final String[] VISUAL_DICT = {"distanceString", "durationString", "durationInTrafficString", "summary"};
 
 
 
@@ -29,27 +30,25 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         /*
          * Hand out ID to Forecast Loader.
          * Ensuring a loader is initialized and active.
          */
         int loaderId = FORECAST_LOADER_ID;
-        LoaderCallbacks<String[]> callback = MainActivity.this;
+        LoaderCallbacks<JsonStore> callback = MainActivity.this;
         Bundle bundleForLoader = null;
         getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
 
         mDirectionsTextView = (TextView) findViewById(R.id.tv_directions);
 
-
-
     }
 
     @Override
-    public Loader<String[]> onCreateLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<String[]>(this) {
+    public Loader<JsonStore> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<JsonStore>(this) {
             // Member variable to cache directions information in
-            String[] mDirectionsData = null;
+            JsonStore mDirectionsData = null;
+            //String[] mDirectionsData = null;
 
             @Override
             protected void onStartLoading() {
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
              *         null if an error occurs
              */
             @Override
-            public String[] loadInBackground() {
+            public JsonStore loadInBackground() {
 
                 /*
                  * Run first trial query:
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                     String jsonDirectionsResponse = NetUtils
                             .getResponseFromHttpUrl(getURL);
 
-                    String[] simpleJsonDirectionsData = JsonUtils
+                    JsonStore simpleJsonDirectionsData = JsonUtils
                             .getDirectionsStringsFromJson(MainActivity.this, jsonDirectionsResponse);
 
                     return simpleJsonDirectionsData;
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
              *
              * @param data The result of the load
              */
-            public void deliverResult(String[] data) {
+            public void deliverResult(JsonStore data) {
                 mDirectionsData = data;
                 super.deliverResult(data);
             }
@@ -106,16 +105,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     }
 
     @Override
-    public void onLoadFinished(Loader<String[]> loader, String[] data) {
+    public void onLoadFinished(Loader<JsonStore> loader, JsonStore data) {
         mDirectionsTextView.setText("From: " + ORIGIN + "\n" + "To: " + DESTINATION + "\n\n");
 
-        for (int i = 0; i < data.length; i++) {
-            mDirectionsTextView.append(VISUAL_DICT[i] + data[i] + "\n");
-        }
+        mDirectionsTextView.append(data.toString());
     }
 
     @Override
-    public void onLoaderReset(Loader<String[]> loader) {
+    public void onLoaderReset(Loader<JsonStore> loader) {
 
     }
 }

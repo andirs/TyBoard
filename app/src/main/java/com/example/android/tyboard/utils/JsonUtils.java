@@ -2,6 +2,8 @@ package com.example.android.tyboard.utils;
 
 import android.content.Context;
 
+import com.example.android.tyboard.data.JsonStore;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,10 +14,12 @@ import org.json.JSONObject;
 
 public final class JsonUtils {
 
-    public static String[] getDirectionsStringsFromJson(Context context,
+    public static JsonStore getDirectionsStringsFromJson(Context context,
                                                         String directionsJsonStr)
             throws JSONException {
 
+        //HashMap<String, Object> directionData = new HashMap<String, Object>();
+        JsonStore directionData;
 
         /* All routes are stored in routes object */
         final String GDA_ROUTES = "routes";
@@ -59,12 +63,25 @@ public final class JsonUtils {
         JSONObject durationObject = leg.getJSONObject(GDA_DURATION);
         JSONObject durationInTrafficObject = leg.getJSONObject(GDA_DURATION_IN_TRAFFIC);
 
-        parsedDirectionData[0] = distanceObject.getString("text");
-        parsedDirectionData[1] = durationObject.getString("text");
-        parsedDirectionData[2] = durationInTrafficObject.getString("text");
-        parsedDirectionData[3] = summary;
+        /*
+        directionData.put("distanceString", distanceObject.getString("text"));
+        directionData.put("durationString", durationObject.getString("text"));
+        directionData.put("durationInTrafficString", durationInTrafficObject.getString("text"));
+        directionData.put("distance", Integer.valueOf(distanceObject.getString("value")));
+        directionData.put("duration", Integer.valueOf(durationObject.getString("value")));
+        directionData.put("durationInTraffic", Integer.valueOf(durationInTrafficObject.getString("value")));
+        directionData.put("summary", summary);
+        */
 
-        return parsedDirectionData;
+        directionData = new JsonStore(
+                distanceObject.getString("text"),
+                durationObject.getString("text"),
+                durationInTrafficObject.getString("text"),
+                summary,
+                Integer.valueOf(durationObject.getString("value")),
+                Integer.valueOf(durationInTrafficObject.getString("value")));
+
+        return directionData;
     }
 
 }
