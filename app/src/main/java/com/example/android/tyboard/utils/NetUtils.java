@@ -28,11 +28,46 @@ public final class NetUtils {
     private static final String GOOGLE_DIRECTIONS_TRAFFIC_MODEL_PARAM = "traffic_model";
     private static final String GOOGLE_DIRECTIONS_SHOW_ALTERNATIVES_PARAM = "alternatives";
     private static final String GOOGLE_DIRECTIONS_KEY_PARAM = "key";
-    private static final String alternatives = "false";
-    private static final String departure_time = "now";
-    private static final String traffic_model = "best_guess";
-    private static final String key = "AIzaSyDWdsDqlar0n9iV2tIB7Gb_G9iNV1P4K8E";
+    private static final String gDirectionsDepartureTime = "now";
+    private static final String gDirectionsTrafficModel = "best_guess";
+    private static final String gDirectionsAlternatives = "false";
+    private static final String gDirectionsKey = "AIzaSyDWdsDqlar0n9iV2tIB7Gb_G9iNV1P4K8E";
 
+
+    //private static final String OWEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather?zip=94040,us";
+    private static final String OWEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
+    private static final String OWEATHER_ZIP_PARAM = "zip";
+    private static final String OWEATHER_UNITS_PARAM = "units";
+    private static final String OWEATHER_KEY_PARAM = "APPID";
+    private static final String oWeatherKey = "87aa31866d4f5a2a8cd4ec8d2f6c13a2";
+
+
+    public static URL buildWeatherUrl(String zipCode, String unitString) {
+        // TODO: Turn into long lat specific weather forecast
+        // TODO: Get ZIP from SharedPreferences
+
+        if (zipCode.isEmpty())
+            return null;
+
+        Uri builtUri = Uri.parse(OWEATHER_BASE_URL).buildUpon()
+                .appendQueryParameter(OWEATHER_ZIP_PARAM, zipCode)
+                .appendQueryParameter(OWEATHER_UNITS_PARAM, unitString)
+                .appendQueryParameter(OWEATHER_KEY_PARAM, oWeatherKey)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built OpenWeather URI " + url);
+
+        return url;
+
+    }
 
     /**
      * Builds the URL used to talk to the Google Directions API.
@@ -50,10 +85,10 @@ public final class NetUtils {
         Uri builtUri = Uri.parse(GOOGLE_DIRECTIONS_BASE_URL).buildUpon()
                 .appendQueryParameter(GOOGLE_DIRECTIONS_ORIGIN_PARAM, origin)
                 .appendQueryParameter(GOOGLE_DIRECTIONS_DESTINATION_PARAM, destination)
-                .appendQueryParameter(GOOGLE_DIRECTIONS_DEPARTURE_TIME_PARAM, departure_time)
-                .appendQueryParameter(GOOGLE_DIRECTIONS_TRAFFIC_MODEL_PARAM, traffic_model)
-                .appendQueryParameter(GOOGLE_DIRECTIONS_SHOW_ALTERNATIVES_PARAM, alternatives)
-                .appendQueryParameter(GOOGLE_DIRECTIONS_KEY_PARAM, key).build();
+                .appendQueryParameter(GOOGLE_DIRECTIONS_DEPARTURE_TIME_PARAM, gDirectionsDepartureTime)
+                .appendQueryParameter(GOOGLE_DIRECTIONS_TRAFFIC_MODEL_PARAM, gDirectionsTrafficModel)
+                .appendQueryParameter(GOOGLE_DIRECTIONS_SHOW_ALTERNATIVES_PARAM, gDirectionsAlternatives)
+                .appendQueryParameter(GOOGLE_DIRECTIONS_KEY_PARAM, gDirectionsKey).build();
 
         URL url = null;
 
@@ -63,7 +98,7 @@ public final class NetUtils {
             e.printStackTrace();
         }
 
-        Log.v(TAG, "Build URI " + url);
+        Log.v(TAG, "Built Google Directions URI " + url);
 
         return url;
     }

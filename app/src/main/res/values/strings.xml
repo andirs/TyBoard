@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TyBoard</string>
     <string name="title_activity_maps">Map</string>
+    <string name="tv_duration_with_traffic_min_std">min</string>
 </resources>
