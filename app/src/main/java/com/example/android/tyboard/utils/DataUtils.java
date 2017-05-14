@@ -58,6 +58,7 @@ public final class DataUtils {
 
         // weatherObject: Stores description and icon information
         JSONObject weatherObject = weatherArray.getJSONObject(0);
+        String weatherIdString = weatherObject.getString("id");
         String descriptionString = weatherObject.getString("description");
         String iconString = weatherObject.getString("icon");
 
@@ -75,10 +76,11 @@ public final class DataUtils {
         String sunriseString = sysObject.getString("sunrise");
         String sunsetString = sysObject.getString("sunset");
 
-        weatherData = new JsonWeatherStore(descriptionString, iconString, tempString,
-                pressureString, humidityString, tempMinString,
-                tempMaxString, windSpeedString, sunriseString,
-                sunsetString);
+        weatherData = new JsonWeatherStore(
+                weatherIdString, descriptionString, iconString,
+                tempString, pressureString, humidityString,
+                tempMinString, tempMaxString, windSpeedString,
+                sunriseString, sunsetString);
 
         return weatherData;
     }

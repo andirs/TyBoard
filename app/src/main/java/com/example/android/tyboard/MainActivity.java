@@ -1,5 +1,6 @@
 package com.example.android.tyboard;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int WEATHER_LOADER_ID = 23;
 
     private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView;
-    private TextView mWeatherTextView;
+    private TextView mWeatherTextView, mWeatherIconTextView;
     private ImageView mDirectionsImageView;
 
     //private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
@@ -34,15 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private class DirectionsCallback implements LoaderCallbacks<JsonDirectionsStore> {
         private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
         private static final String DESTINATION = "Brightcove, San Francisco";
-
-        /*
-         * Hand out ID to Forecast Loader.
-         * Ensuring a loader is initialized and active.
-         */
-        int loaderId = DIRECTIONS_LOADER_ID;
-        LoaderCallbacks<JsonDirectionsStore> callback = DirectionsCallback.this;
-        Bundle bundleForLoader = null;
-
 
         @Override
         public Loader<JsonDirectionsStore> onCreateLoader(int id, Bundle args) {
@@ -148,15 +140,6 @@ public class MainActivity extends AppCompatActivity {
         private static final String DESTINATION_ZIP = "94103,us";
         private static final String WEATHER_FORMAT = "imperial";
 
-        /*
-         * Hand out ID to Forecast Loader.
-         * Ensuring a loader is initialized and active.
-         */
-        int loaderId = WEATHER_LOADER_ID;
-        LoaderCallbacks<JsonWeatherStore> callback = WeatherCallback.this;
-        Bundle bundleForLoader = null;
-
-
         @Override
         public Loader<JsonWeatherStore> onCreateLoader(int id, Bundle args) {
             return new AsyncTaskLoader<JsonWeatherStore>(MainActivity.this) {
@@ -219,6 +202,13 @@ public class MainActivity extends AppCompatActivity {
         public void onLoadFinished(Loader<JsonWeatherStore> loader, JsonWeatherStore data) {
             mWeatherTextView.setText("Weather of: " + DESTINATION_ZIP + "\n\n");
 
+            String weatherFontString = "wi_owm_" + data.getWeatherIdInt();
+            int weatherTypeStringId = getResources().getIdentifier(weatherFontString, "string", getPackageName());
+
+            // Set font to display weather icons
+            Typeface iconFont = Typeface.createFromAsset(getAssets(), "fonts/weathericons-regular-webfont.ttf");
+            mWeatherIconTextView.setTypeface(iconFont);
+            mWeatherIconTextView.setText(getResources().getString(weatherTypeStringId));
             mWeatherTextView.append(data.toString());
         }
 
@@ -249,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsDistanceTextView = (TextView) findViewById(R.id.tv_distance);
         mDirectionsImageView = (ImageView) findViewById(R.id.iv_route);
         mDirectionsTextView = (TextView) findViewById(R.id.tv_directions);
+
+        mWeatherIconTextView = (TextView) findViewById(R.id.tv_weather_icon);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
 
     }

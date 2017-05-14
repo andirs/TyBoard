@@ -7,15 +7,10 @@ import java.util.Date;
  */
 
 public class JsonWeatherStore {
-    private String descriptionString,
-            iconString, tempString,
-            pressureString, humidityString,
-            tempMinString, tempMaxString,
-            windStringSpeed, sunriseString,
-            sunsetString;
+    private String descriptionString, iconString;
 
     private double tempDouble, tempMinDouble, tempMaxDouble, windSpeedDouble;
-    private int pressureInt, humidityInt;
+    private int weatherIdInt, pressureInt, humidityInt;
     private Date sunriseDate;
     private Date sunsetDate;
 
@@ -27,13 +22,14 @@ public class JsonWeatherStore {
         sunsetDate = new Date(Long.parseLong("1494742503") * 1000);
     }
 
-    public JsonWeatherStore(String descriptionString,
+    public JsonWeatherStore(String weatherIdString, String descriptionString,
                             String iconString, String tempString,
                             String pressureString, String humidityString,
                             String tempMinString, String tempMaxString,
                             String windSpeedString, String sunriseString,
                             String sunsetString) {
 
+        this.weatherIdInt = Integer.valueOf(weatherIdString);
         this.descriptionString = descriptionString;
         this.iconString = iconString;
 
@@ -48,6 +44,14 @@ public class JsonWeatherStore {
         // Turn sunrise and sunset strings into Date Objects
         this.sunriseDate = new Date(Long.parseLong(sunriseString) * 1000);
         this.sunsetDate = new Date(Long.parseLong(sunsetString) * 1000);
+    }
+
+    public String getIconString() {
+        return iconString;
+    }
+
+    public int getWeatherIdInt() {
+        return weatherIdInt;
     }
 
     public String toString() {

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard/TyBoard.iml" filepath="$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard/TyBoard.iml" />
-      <module fileurl="file://$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard/app/app.iml" filepath="$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard/app/app.iml" />
+      <module fileurl="file://$USER_HOME$/Dropbox (Personal)/android/TyBoard/TyBoard.iml" filepath="$USER_HOME$/Dropbox (Personal)/android/TyBoard/TyBoard.iml" />
+      <module fileurl="file://$USER_HOME$/Dropbox (Personal)/android/TyBoard/app/app.iml" filepath="$USER_HOME$/Dropbox (Personal)/android/TyBoard/app/app.iml" />
     </modules>
   </component>
 </project>

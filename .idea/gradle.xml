@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard" />
-            <option value="$USER_HOME$/Dropbox (Personal)/_Studium/03_Semester/AP/Codes/TyBoard/app" />
+            <option value="$USER_HOME$/Dropbox (Personal)/android/TyBoard" />
+            <option value="$USER_HOME$/Dropbox (Personal)/android/TyBoard/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
