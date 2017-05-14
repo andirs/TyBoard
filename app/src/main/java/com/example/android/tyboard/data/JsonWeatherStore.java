@@ -54,6 +54,10 @@ public class JsonWeatherStore {
         return weatherIdInt;
     }
 
+    public double getTempDouble() {
+        return tempDouble;
+    }
+
     public String toString() {
         return "Temperature: " + tempDouble + "F \n"
                 + "Description: " + descriptionString + "\n"

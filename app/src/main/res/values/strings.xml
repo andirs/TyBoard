@@ -2,6 +2,7 @@
     <string name="app_name">TyBoard</string>
     <string name="title_activity_maps">Map</string>
     <string name="tv_duration_with_traffic_min_std">min</string>
+    <string name="settings_location">Locations</string>
 
     <string name="wi_day_sunny">&#xf00d;</string>
     <string name="wi_day_cloudy">&#xf002;</string>
@@ -599,4 +600,8 @@
     <string name="wi_wu_sunny">&#xf00d;</string>
     <string name="wi_wu_tstorms">&#xf01e;</string>
     <string name="wi_wu_unknown">&#xf00d;</string>
+    <string name="tv_settings_dir_title_def">Set Home and Destination</string>
+    <string name="tv_settings_home_title">Home Destination</string>
+    <string name="tv_settings_destination_title">Work Destination</string>
+    <string name="btn_settings_set">CHANGE</string>
 </resources>

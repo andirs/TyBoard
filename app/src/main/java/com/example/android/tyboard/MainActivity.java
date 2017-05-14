@@ -1,5 +1,6 @@
 package com.example.android.tyboard;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -7,6 +8,9 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int WEATHER_LOADER_ID = 23;
 
     private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView;
-    private TextView mWeatherTextView, mWeatherIconTextView;
+    private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView;
     private ImageView mDirectionsImageView;
 
     //private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
@@ -209,6 +213,9 @@ public class MainActivity extends AppCompatActivity {
             Typeface iconFont = Typeface.createFromAsset(getAssets(), "fonts/weathericons-regular-webfont.ttf");
             mWeatherIconTextView.setTypeface(iconFont);
             mWeatherIconTextView.setText(getResources().getString(weatherTypeStringId));
+
+            // Set temperature display
+            mWeatherTemperatureTextView.setText(String.valueOf(data.getTempDouble()) + "\u2109");
             mWeatherTextView.append(data.toString());
         }
 
@@ -217,6 +224,25 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.settings_item_directions) {
+            Intent startSettingsActivityIntent = new Intent(this, SettingsLocationsActivity.class);
+            startActivity(startSettingsActivityIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -241,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsTextView = (TextView) findViewById(R.id.tv_directions);
 
         mWeatherIconTextView = (TextView) findViewById(R.id.tv_weather_icon);
+        mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
 
     }
