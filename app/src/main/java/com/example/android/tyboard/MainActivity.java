@@ -1,6 +1,8 @@
 package com.example.android.tyboard;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -37,8 +39,17 @@ public class MainActivity extends AppCompatActivity {
     //private static final String DESTINATION = "Brightcove, San Francisco";
 
     private class DirectionsCallback implements LoaderCallbacks<JsonDirectionsStore> {
-        private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
-        private static final String DESTINATION = "Brightcove, San Francisco";
+
+        private SharedPreferences sharedPref;
+        private String origin, destination;
+
+        public DirectionsCallback(Context context) {
+            sharedPref = context.getSharedPreferences(
+                    getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+
+            origin = sharedPref.getString("homeAddress", "248 Louise Ln, San Mateo, 94403 CA");
+            destination = sharedPref.getString("workAddress", "Brightcove, San Francisco");
+        }
 
         @Override
         public Loader<JsonDirectionsStore> onCreateLoader(int id, Bundle args) {
@@ -66,12 +77,6 @@ public class MainActivity extends AppCompatActivity {
                  */
                 @Override
                 public JsonDirectionsStore loadInBackground() {
-
-                /*
-                 * Run first trial query:
-                 */
-                    String origin = "248 Louise Ln, San Mateo, 94403 CA";
-                    String destination = "Brightcove, San Francisco";
 
                     URL getURL = NetUtils.buildDirectionsUrl(origin, destination);
                     try {
@@ -103,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<JsonDirectionsStore> loader, JsonDirectionsStore data) {
-            mDirectionsTextView.setText("From: " + ORIGIN + "\n" + "To: " + DESTINATION + "\n\n");
+            mDirectionsTextView.setText("From: " + origin + "\n" + "To: " + destination + "\n\n");
 
             // Simple image processing for binary use in bay area
             // TODO: Come up with generic solution for all US (potentially analyzing legs and showing route images of max 3 longest legs)
@@ -258,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         int weatherLoaderId = WEATHER_LOADER_ID;
 
         Bundle bundleForLoader = null;
-        getSupportLoaderManager().initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback());
+        getSupportLoaderManager().initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(this));
         getSupportLoaderManager().initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback());
 
         mDirectionsDurationTrafficTextView = (TextView) findViewById(R.id.tv_duration_with_traffic);

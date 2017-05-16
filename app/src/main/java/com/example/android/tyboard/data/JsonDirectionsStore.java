@@ -7,7 +7,8 @@ import static com.example.android.tyboard.utils.DataUtils.round;
  */
 
 public class JsonDirectionsStore {
-    private String distanceString, durationString, durationInTrafficString, summaryString;
+    private String distanceString, durationString, durationInTrafficString,
+            summaryString, endLatString, endLongString;
     private int durationInt, durationInTrafficInt;
     private double percentageOver;
 
@@ -53,6 +54,10 @@ public class JsonDirectionsStore {
     public double getPercentageOver() {
         return percentageOver;
     }
+
+    public String getEndLatString() { return endLatString; }
+
+    public String getEndLongString() { return endLongString; }
 
     public void setDistanceString(String distanceString) {
         this.distanceString = distanceString;

@@ -605,4 +605,6 @@
     <string name="tv_settings_destination_title">Work</string>
     <string name="btn_settings_set">CHANGE</string>
     <string name="actv_home_address_string">Enter home address</string>
+    <string name="shared_preferences_settings_key">com.android.example.TyBoard.PREFERENCE_SETTINGS</string>
+    <string name="shared_preferences_destination_zip_key">com.android.example.TyBoard.PREFERENCE_DESTINATION_ZIP</string>
 </resources>

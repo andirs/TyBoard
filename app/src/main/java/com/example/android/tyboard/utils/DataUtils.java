@@ -110,6 +110,8 @@ public final class DataUtils {
         /* Indicator for track summary */
         final String GDA_SUMMARY = "summary";
 
+        final String GDA_END_LOCATION = "end_location";
+
         JSONObject directionsJson = new JSONObject(directionsJsonStr);
 
         // TODO: Check for errors with JSON.
@@ -131,6 +133,7 @@ public final class DataUtils {
         JSONObject distanceObject = leg.getJSONObject(GDA_DISTANCE);
         JSONObject durationObject = leg.getJSONObject(GDA_DURATION);
         JSONObject durationInTrafficObject = leg.getJSONObject(GDA_DURATION_IN_TRAFFIC);
+        //JSONObject endLocationObject = leg.getJSONObject(GDA_END_LOCATION);
 
         /*
         directionData.put("distanceString", distanceObject.getString("text"));
