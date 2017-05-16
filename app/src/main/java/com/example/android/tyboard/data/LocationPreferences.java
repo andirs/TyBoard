@@ -23,7 +23,7 @@ public class LocationPreferences {
     }
 
     public String getWorkLocation() {
-        return preferences.getString("homeLocation", "Brightcove, San Francisco");
+        return preferences.getString("workLocation", "Brightcove, San Francisco");
     }
 
     public void setWorkLocation(String workLocation) {

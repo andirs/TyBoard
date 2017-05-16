@@ -601,7 +601,8 @@
     <string name="wi_wu_tstorms">&#xf01e;</string>
     <string name="wi_wu_unknown">&#xf00d;</string>
     <string name="tv_settings_dir_title_def">Set Home and Destination</string>
-    <string name="tv_settings_home_title">Home Destination</string>
-    <string name="tv_settings_destination_title">Work Destination</string>
+    <string name="tv_settings_home_title">Home</string>
+    <string name="tv_settings_destination_title">Work</string>
     <string name="btn_settings_set">CHANGE</string>
+    <string name="actv_home_address_string">Enter home address</string>
 </resources>
