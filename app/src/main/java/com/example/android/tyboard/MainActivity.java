@@ -146,8 +146,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class WeatherCallback implements LoaderCallbacks<JsonWeatherStore> {
+        private SharedPreferences sharedPref;
+
+        private String destinationLat;
+        private String destinationLong;
         private static final String DESTINATION_ZIP = "94103,us";
         private static final String WEATHER_FORMAT = "imperial";
+
+        public WeatherCallback() {
+            sharedPref = getSharedPreferences(
+                    getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+
+            destinationLat = sharedPref.getString("workLatitude", "35");
+            destinationLong = sharedPref.getString("workLongitude", "139");
+
+        }
 
         @Override
         public Loader<JsonWeatherStore> onCreateLoader(int id, Bundle args) {
@@ -179,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 /*
                  * Run first trial query:
                  */
-                    URL getURL = NetUtils.buildWeatherUrl(DESTINATION_ZIP, WEATHER_FORMAT);
+                    URL getURL = NetUtils.buildWeatherUrl(destinationLat, destinationLong, WEATHER_FORMAT);
                     try {
                         String jsonWeatherResponse = NetUtils
                                 .getResponseFromHttpUrl(getURL);
@@ -209,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<JsonWeatherStore> loader, JsonWeatherStore data) {
-            mWeatherTextView.setText("Weather of: " + DESTINATION_ZIP + "\n\n");
+            mWeatherTextView.setText("Weather of Lat: " + destinationLat + " Long: " + destinationLong + "\n\n");
 
             String weatherFontString = "wi_owm_" + data.getWeatherIdInt();
             int weatherTypeStringId = getResources().getIdentifier(weatherFontString, "string", getPackageName());

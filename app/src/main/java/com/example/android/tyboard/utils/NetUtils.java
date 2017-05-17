@@ -37,20 +37,23 @@ public final class NetUtils {
     //private static final String OWEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather?zip=94040,us";
     private static final String OWEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
     private static final String OWEATHER_ZIP_PARAM = "zip";
+    private static final String OWEATHER_LAT_PARAM = "lat";
+    private static final String OWEATHER_LON_PARAM = "lon";
     private static final String OWEATHER_UNITS_PARAM = "units";
     private static final String OWEATHER_KEY_PARAM = "APPID";
     private static final String oWeatherKey = "87aa31866d4f5a2a8cd4ec8d2f6c13a2";
 
 
-    public static URL buildWeatherUrl(String zipCode, String unitString) {
+    public static URL buildWeatherUrl(String latCode, String lonCode, String unitString) {
         // TODO: Turn into long lat specific weather forecast
         // TODO: Get ZIP from SharedPreferences
 
-        if (zipCode.isEmpty())
+        if (latCode.isEmpty() || lonCode.isEmpty())
             return null;
 
         Uri builtUri = Uri.parse(OWEATHER_BASE_URL).buildUpon()
-                .appendQueryParameter(OWEATHER_ZIP_PARAM, zipCode)
+                .appendQueryParameter(OWEATHER_LAT_PARAM, latCode)
+                .appendQueryParameter(OWEATHER_LON_PARAM, lonCode)
                 .appendQueryParameter(OWEATHER_UNITS_PARAM, unitString)
                 .appendQueryParameter(OWEATHER_KEY_PARAM, oWeatherKey)
                 .build();

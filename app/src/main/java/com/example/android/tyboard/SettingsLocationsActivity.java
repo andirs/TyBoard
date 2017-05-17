@@ -13,6 +13,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
 
 public class SettingsLocationsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -91,6 +92,9 @@ public class SettingsLocationsActivity extends AppCompatActivity implements View
                 case PLACE_WORK_AUTOCOMPLETE_REQUEST_CODE:
                     mWorkAutoCompleteEditText.setText(place.getAddress());
                     editor.putString("workAddress", place.getAddress().toString());
+                    LatLng location = place.getLatLng();
+                    editor.putString("workLatitude", String.valueOf(location.latitude));
+                    editor.putString("workLongitude", String.valueOf(location.longitude));
                     Log.i(TAG, "Work Address set to: " + place.getName());
                     break;
             }

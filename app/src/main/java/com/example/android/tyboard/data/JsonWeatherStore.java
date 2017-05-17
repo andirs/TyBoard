@@ -7,10 +7,10 @@ import java.util.Date;
  */
 
 public class JsonWeatherStore {
-    private String descriptionString, iconString;
+    private String descriptionString, iconString, pressureString;
 
     private double tempDouble, tempMinDouble, tempMaxDouble, windSpeedDouble;
-    private int weatherIdInt, pressureInt, humidityInt;
+    private int weatherIdInt, humidityInt;
     private Date sunriseDate;
     private Date sunsetDate;
 
@@ -34,7 +34,7 @@ public class JsonWeatherStore {
         this.iconString = iconString;
 
         // Parse Strings into correct formats
-        this.pressureInt = Integer.parseInt(pressureString);
+        this.pressureString = pressureString;
         this.humidityInt = Integer.parseInt(humidityString);
         this.tempDouble = Double.parseDouble(tempString);
         this.tempMinDouble = Double.parseDouble(tempMinString);
