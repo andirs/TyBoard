@@ -268,6 +268,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Check if this is the first run
+        checkFirstRun();
+
         /*
          * Hand out ID to Forecast Loader.
          * Ensuring a loader is initialized and active.
@@ -288,5 +291,31 @@ public class MainActivity extends AppCompatActivity {
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
 
+    }
+
+    private void checkFirstRun() {
+        final String PREFS_NAME = getString(R.string.shared_preferences_settings_key);
+        final String PREFS_KEY = getString(R.string.shared_preferences_settings_version);
+        final int DOESNT_EXIST = -1;
+
+        int currentVersion = BuildConfig.VERSION_CODE;
+
+        SharedPreferences sharedPrefs = getSharedPreferences(
+                PREFS_NAME, MODE_PRIVATE);
+
+        int savedVersion = sharedPrefs.getInt(PREFS_KEY, DOESNT_EXIST);
+
+        if (currentVersion == savedVersion) {
+            return;
+        } else if (savedVersion == DOESNT_EXIST) {
+            // New install or user cleared shared preferences
+            Intent startSettingsActivity = new Intent(this, SettingsLocationsActivity.class);
+            startActivity(startSettingsActivity);
+        } else if (currentVersion > savedVersion) {
+            // TODO: Deal with updates in the future
+        }
+
+        // Update to current version
+        sharedPrefs.edit().putInt(PREFS_KEY, currentVersion).apply();
     }
 }
