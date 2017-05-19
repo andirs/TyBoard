@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                                 .getResponseFromHttpUrl(getURL);
 
                         JsonDirectionsStore simpleJsonDirectionsData = DataUtils
-                                .getDirectionsStringsFromJson(MainActivity.this, jsonDirectionsResponse);
+                                .getDirectionsStringsFromJson(jsonDirectionsResponse);
 
                         return simpleJsonDirectionsData;
 
