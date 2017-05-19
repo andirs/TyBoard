@@ -31,7 +31,6 @@ public final class NetUtils {
     private static final String gDirectionsDepartureTime = "now";
     private static final String gDirectionsTrafficModel = "best_guess";
     private static final String gDirectionsAlternatives = "false";
-    private static final String gDirectionsKey = "AIzaSyDWdsDqlar0n9iV2tIB7Gb_G9iNV1P4K8E";
 
 
     //private static final String OWEATHER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather?zip=94040,us";
@@ -41,14 +40,10 @@ public final class NetUtils {
     private static final String OWEATHER_LON_PARAM = "lon";
     private static final String OWEATHER_UNITS_PARAM = "units";
     private static final String OWEATHER_KEY_PARAM = "APPID";
-    private static final String oWeatherKey = "87aa31866d4f5a2a8cd4ec8d2f6c13a2";
 
 
-    public static URL buildWeatherUrl(String latCode, String lonCode, String unitString) {
-        // TODO: Turn into long lat specific weather forecast
-        // TODO: Get ZIP from SharedPreferences
-
-        if (latCode.isEmpty() || lonCode.isEmpty())
+    public static URL buildWeatherUrl(String latCode, String lonCode, String unitString, String oWeatherKey) {
+        if (latCode.isEmpty() || lonCode.isEmpty() || oWeatherKey.isEmpty())
             return null;
 
         Uri builtUri = Uri.parse(OWEATHER_BASE_URL).buildUpon()
@@ -79,7 +74,7 @@ public final class NetUtils {
      * @param destination our work location to track in the morning
      * @return The URL to use to query the Google API
      */
-    public static URL buildDirectionsUrl(String origin, String destination) {
+    public static URL buildDirectionsUrl(String origin, String destination, String gDirectionsKey) {
 
         // If origin or destination aren't set, return null
         if (origin.isEmpty() || destination.isEmpty())

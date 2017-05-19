@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             return new AsyncTaskLoader<JsonDirectionsStore>(MainActivity.this) {
                 // Member variable to cache directions information in
                 JsonDirectionsStore mDirectionsData = null;
+                String gDirectionsKey;
                 //String[] mDirectionsData = null;
 
 
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     // TODO: Needs to be checked if thread-safe solution
                     increaseApiCalls();
                     hideAllViews();
+                    gDirectionsKey = getString(R.string.com_google_android_directions_API_KEY);
+
                     if (mDirectionsData != null) {
                         deliverResult(mDirectionsData);
                     } else {
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public JsonDirectionsStore loadInBackground() {
 
-                    URL getURL = NetUtils.buildDirectionsUrl(origin, destination);
+                    URL getURL = NetUtils.buildDirectionsUrl(origin, destination, gDirectionsKey);
                     try {
                         String jsonDirectionsResponse = NetUtils
                                 .getResponseFromHttpUrl(getURL);
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             return new AsyncTaskLoader<JsonWeatherStore>(MainActivity.this) {
                 // Member variable to cache directions information in
                 JsonWeatherStore mWeatherData = null;
+                String oWeatherKey;
                 //String[] mDirectionsData = null;
 
                 @Override
@@ -195,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
                     increaseApiCalls();
                     hideAllViews();
+                    oWeatherKey = getString(R.string.com_openweather_API_KEY);
 
                     if (mWeatherData != null) {
                         deliverResult(mWeatherData);
@@ -216,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 /*
                  * Run first trial query:
                  */
-                    URL getURL = NetUtils.buildWeatherUrl(destinationLat, destinationLong, WEATHER_FORMAT);
+                    URL getURL = NetUtils.buildWeatherUrl(destinationLat, destinationLong, WEATHER_FORMAT, oWeatherKey);
                     try {
                         String jsonWeatherResponse = NetUtils
                                 .getResponseFromHttpUrl(getURL);
