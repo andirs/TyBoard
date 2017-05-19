@@ -1,6 +1,5 @@
 package com.example.android.tyboard;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -10,11 +9,13 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.tyboard.data.JsonDirectionsStore;
@@ -31,10 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int DIRECTIONS_LOADER_ID = 0;
     private static final int WEATHER_LOADER_ID = 23;
+    private int apiCalls;
 
-    private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView;
+    private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView, mDirectionsDurationMinTextView;
     private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView;
     private ImageView mDirectionsImageView;
+    private ProgressBar mDataLoadingProgressBar;
 
     //private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
     //private static final String DESTINATZION_ZIP = "94103,us";
@@ -44,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
         private SharedPreferences sharedPref;
         private String origin, destination;
+        private int apiCalls;
 
-        public DirectionsCallback(Context context) {
-            sharedPref = context.getSharedPreferences(
+        public DirectionsCallback(int apiCalls) {
+            sharedPref = getSharedPreferences(
                     getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+            this.apiCalls = apiCalls;
 
             origin = sharedPref.getString("homeAddress", "248 Louise Ln, San Mateo, 94403 CA");
             destination = sharedPref.getString("workAddress", "Brightcove, San Francisco");
@@ -60,8 +65,14 @@ public class MainActivity extends AppCompatActivity {
                 JsonDirectionsStore mDirectionsData = null;
                 //String[] mDirectionsData = null;
 
+
                 @Override
                 protected void onStartLoading() {
+
+                    // Hide all existing views to load data and add count to apiCalls
+                    // TODO: Needs to be checked if thread-safe solution
+                    increaseApiCalls();
+                    hideAllViews();
                     if (mDirectionsData != null) {
                         deliverResult(mDirectionsData);
                     } else {
@@ -126,18 +137,25 @@ public class MainActivity extends AppCompatActivity {
 
 
             if (percentageOver < 20.0) {
-                mDirectionsDurationTrafficTextView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorGreen));
+                mDirectionsDurationTrafficTextView.setTextColor(
+                        ContextCompat.getColor(MainActivity.this, R.color.colorGreen));
             } else if (percentageOver >= 20.0 && percentageOver < 40.0) {
-                mDirectionsDurationTrafficTextView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorYellow));
+                mDirectionsDurationTrafficTextView.setTextColor(
+                        ContextCompat.getColor(MainActivity.this, R.color.colorYellow));
             } else if (percentageOver >= 40.0 && percentageOver < 60.0) {
-                mDirectionsDurationTrafficTextView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorOrange));
+                mDirectionsDurationTrafficTextView.setTextColor(
+                        ContextCompat.getColor(MainActivity.this, R.color.colorOrange));
             } else if (percentageOver >= 60.0) {
-                mDirectionsDurationTrafficTextView.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.colorRed));
+                mDirectionsDurationTrafficTextView.setTextColor(
+                        ContextCompat.getColor(MainActivity.this, R.color.colorRed));
             }
 
-            mDirectionsDurationTrafficTextView.setText(String.valueOf((int) (round(data.getDurationInTraffic() / (float) 60.0 ,0))));
+            mDirectionsDurationTrafficTextView.setText(
+                    String.valueOf((int) (round(data.getDurationInTraffic() / (float) 60.0 ,0))));
             mDirectionsDistanceTextView.setText(data.getDistanceString());
             mDirectionsTextView.append(data.toString());
+
+            joinCallbacks();
         }
 
         @Override
@@ -146,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
     private class WeatherCallback implements LoaderCallbacks<JsonWeatherStore> {
         private SharedPreferences sharedPref;
 
@@ -154,10 +171,12 @@ public class MainActivity extends AppCompatActivity {
         private String destinationLong;
         private static final String DESTINATION_ZIP = "94103,us";
         private static final String WEATHER_FORMAT = "imperial";
+        private int apiCalls;
 
-        public WeatherCallback() {
+        public WeatherCallback(int apiCalls) {
             sharedPref = getSharedPreferences(
                     getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+            this.apiCalls = apiCalls;
 
             destinationLat = sharedPref.getString("workLatitude", "35");
             destinationLong = sharedPref.getString("workLongitude", "139");
@@ -173,12 +192,15 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 protected void onStartLoading() {
+
+                    increaseApiCalls();
+                    hideAllViews();
+
                     if (mWeatherData != null) {
                         deliverResult(mWeatherData);
                     } else {
                         forceLoad();
                     }
-
                 }
 
                 /**
@@ -237,6 +259,9 @@ public class MainActivity extends AppCompatActivity {
             // Set temperature display
             mWeatherTemperatureTextView.setText(String.valueOf(data.getTempDouble()) + "\u2109");
             mWeatherTextView.append(data.toString());
+
+            // Show all views after loading
+            joinCallbacks();
         }
 
         @Override
@@ -279,29 +304,77 @@ public class MainActivity extends AppCompatActivity {
          */
         int directionsLoaderId = DIRECTIONS_LOADER_ID;
         int weatherLoaderId = WEATHER_LOADER_ID;
+        int apiCalls = 0;
 
+        initiateViews();
+        hideAllViews();
+
+        apiCalls = 2;
+
+        // After both loaders have loaded, the views will
+        // be shown through joinCallbacks()
         Bundle bundleForLoader = null;
         Loader directionsLoader = getSupportLoaderManager()
-                .initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(this));
+                .initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(apiCalls));
         Loader weatherLoader = getSupportLoaderManager()
-                .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback());
+                .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback(apiCalls));
+
+
+    }
+
+    /**
+     * Helper method to load all views that
+     * will be shown in main activity.
+     */
+    private void initiateViews() {
+        mDataLoadingProgressBar = (ProgressBar) findViewById(R.id.pb_data_loading);
 
         mDirectionsDurationTrafficTextView = (TextView) findViewById(R.id.tv_duration_with_traffic);
         mDirectionsDistanceTextView = (TextView) findViewById(R.id.tv_distance);
         mDirectionsImageView = (ImageView) findViewById(R.id.iv_route);
         mDirectionsTextView = (TextView) findViewById(R.id.tv_directions);
+        mDirectionsDurationMinTextView = (TextView) findViewById(R.id.tv_duration_with_traffic_min);
 
         mWeatherIconTextView = (TextView) findViewById(R.id.tv_weather_icon);
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
-
-        // hideAllViews();
-
-        //showAllViews();
-
     }
 
+    public void joinCallbacks() {
+        decreaseApiCalls();
+        Log.v("MAIN", "Api Calls: " + getApiCalls());
+        if (getApiCalls() == 0) showAllViews();
+    }
+
+    /**
+     * Thread safe way, to determine how many API-Calls are running
+     * at the same time
+     * @return int value corresponding to running API-Calls
+     */
+    public synchronized int getApiCalls() {
+        return this.apiCalls;
+    }
+
+    /**
+     * Thread safe decrease of API-Calls indicator.
+     */
+    public synchronized void decreaseApiCalls() {
+        this.apiCalls--;
+    }
+
+    /**
+     * Thread safe increase of API-Calls indicator.
+     */
+    public synchronized void increaseApiCalls() {
+        this.apiCalls++;
+    }
+
+    /**
+     * Hides all views and shows progress bar instead.
+     */
     public void hideAllViews() {
+        mDataLoadingProgressBar.setVisibility(View.VISIBLE);
+        mDirectionsDurationMinTextView.setVisibility(View.INVISIBLE);
         mDirectionsTextView.setVisibility(View.INVISIBLE);
         mDirectionsDistanceTextView.setVisibility(View.INVISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.INVISIBLE);
@@ -311,7 +384,14 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsImageView.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Shows all views and hides progress bar.
+     */
     public void showAllViews() {
+
+        mDataLoadingProgressBar.setVisibility(View.INVISIBLE);
+
+        mDirectionsDurationMinTextView.setVisibility(View.VISIBLE);
         mDirectionsTextView.setVisibility(View.VISIBLE);
         mDirectionsDistanceTextView.setVisibility(View.VISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.VISIBLE);

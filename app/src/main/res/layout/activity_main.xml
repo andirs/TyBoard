@@ -203,4 +203,11 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="320dp" />
 
+    <ProgressBar
+        android:id="@+id/pb_data_loading"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        />
+
 </android.support.constraint.ConstraintLayout>
