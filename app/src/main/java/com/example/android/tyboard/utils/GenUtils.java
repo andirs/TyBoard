@@ -1,9 +1,14 @@
 package com.example.android.tyboard.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.example.android.tyboard.BuildConfig;
+import com.example.android.tyboard.R;
+import com.example.android.tyboard.SettingsLocationsActivity;
 
 /**
  * Created by andirs on 5/13/17.
@@ -30,20 +35,34 @@ public class GenUtils {
         return true;
     }
 
-    public int getColorRessource(ContextCompat comp, Context context, double value) {
-        /*
-        if (value < 20.0) {
-            return comp.getColor(context, context.getResources().);
-        } else if (value >= 20.0 && value < 40.0) {
-            return comp.getColor(context, R.color.colorYellow);
-        } else if (value >= 40.0 && value < 60.0) {
-            return comp.getColor(context, R.color.colorOrange);
-        } else if (value >= 60.0) {
-            return comp.getColor(context, R.color.colorRed);
+    /**
+     * Determines, if app is running for the first time
+     * or after an upgrade.
+     * @param context the activity context, the app is running in
+     */
+    public static void checkFirstRun(Context context) {
+        final String PREFS_NAME = context.getString(R.string.shared_preferences_settings_key);
+        final String PREFS_KEY = context.getString(R.string.shared_preferences_settings_version);
+        final int DOESNT_EXIST = -1;
+
+        int currentVersion = BuildConfig.VERSION_CODE;
+
+        SharedPreferences sharedPrefs = context.getSharedPreferences(
+                PREFS_NAME, context.MODE_PRIVATE);
+
+        int savedVersion = sharedPrefs.getInt(PREFS_KEY, DOESNT_EXIST);
+
+        if (currentVersion == savedVersion) {
+            return;
+        } else if (savedVersion == DOESNT_EXIST) {
+            // New install or user cleared shared preferences
+            Intent startSettingsActivity = new Intent(context, SettingsLocationsActivity.class);
+            context.startActivity(startSettingsActivity);
+        } else if (currentVersion > savedVersion) {
+            // TODO: Deal with updates in the future
         }
-        */
 
-        return 0;
-
+        // Update to current version
+        sharedPrefs.edit().putInt(PREFS_KEY, currentVersion).apply();
     }
 }

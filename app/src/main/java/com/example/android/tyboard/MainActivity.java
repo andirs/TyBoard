@@ -13,12 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.tyboard.data.JsonDirectionsStore;
 import com.example.android.tyboard.data.JsonWeatherStore;
 import com.example.android.tyboard.utils.DataUtils;
+import com.example.android.tyboard.utils.GenUtils;
 import com.example.android.tyboard.utils.NetUtils;
 
 import java.net.URL;
@@ -198,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                                 .getResponseFromHttpUrl(getURL);
 
                         JsonWeatherStore simpleJsonWeatherData = DataUtils
-                                .getWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
+                                .getWeatherStringsFromJson(jsonWeatherResponse);
 
                         return simpleJsonWeatherData;
 
@@ -269,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Check if this is the first run
-        checkFirstRun();
+        GenUtils.checkFirstRun(this);
 
         /*
          * Hand out ID to Forecast Loader.
@@ -279,8 +281,10 @@ public class MainActivity extends AppCompatActivity {
         int weatherLoaderId = WEATHER_LOADER_ID;
 
         Bundle bundleForLoader = null;
-        getSupportLoaderManager().initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(this));
-        getSupportLoaderManager().initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback());
+        Loader directionsLoader = getSupportLoaderManager()
+                .initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(this));
+        Loader weatherLoader = getSupportLoaderManager()
+                .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback());
 
         mDirectionsDurationTrafficTextView = (TextView) findViewById(R.id.tv_duration_with_traffic);
         mDirectionsDistanceTextView = (TextView) findViewById(R.id.tv_distance);
@@ -291,31 +295,29 @@ public class MainActivity extends AppCompatActivity {
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
 
+        // hideAllViews();
+
+        //showAllViews();
+
     }
 
-    private void checkFirstRun() {
-        final String PREFS_NAME = getString(R.string.shared_preferences_settings_key);
-        final String PREFS_KEY = getString(R.string.shared_preferences_settings_version);
-        final int DOESNT_EXIST = -1;
+    public void hideAllViews() {
+        mDirectionsTextView.setVisibility(View.INVISIBLE);
+        mDirectionsDistanceTextView.setVisibility(View.INVISIBLE);
+        mDirectionsDurationTrafficTextView.setVisibility(View.INVISIBLE);
+        mWeatherTextView.setVisibility(View.INVISIBLE);
+        mWeatherIconTextView.setVisibility(View.INVISIBLE);
+        mWeatherTemperatureTextView.setVisibility(View.INVISIBLE);
+        mDirectionsImageView.setVisibility(View.INVISIBLE);
+    }
 
-        int currentVersion = BuildConfig.VERSION_CODE;
-
-        SharedPreferences sharedPrefs = getSharedPreferences(
-                PREFS_NAME, MODE_PRIVATE);
-
-        int savedVersion = sharedPrefs.getInt(PREFS_KEY, DOESNT_EXIST);
-
-        if (currentVersion == savedVersion) {
-            return;
-        } else if (savedVersion == DOESNT_EXIST) {
-            // New install or user cleared shared preferences
-            Intent startSettingsActivity = new Intent(this, SettingsLocationsActivity.class);
-            startActivity(startSettingsActivity);
-        } else if (currentVersion > savedVersion) {
-            // TODO: Deal with updates in the future
-        }
-
-        // Update to current version
-        sharedPrefs.edit().putInt(PREFS_KEY, currentVersion).apply();
+    public void showAllViews() {
+        mDirectionsTextView.setVisibility(View.VISIBLE);
+        mDirectionsDistanceTextView.setVisibility(View.VISIBLE);
+        mDirectionsDurationTrafficTextView.setVisibility(View.VISIBLE);
+        mWeatherTextView.setVisibility(View.VISIBLE);
+        mWeatherIconTextView.setVisibility(View.VISIBLE);
+        mWeatherTemperatureTextView.setVisibility(View.VISIBLE);
+        mDirectionsImageView.setVisibility(View.VISIBLE);
     }
 }

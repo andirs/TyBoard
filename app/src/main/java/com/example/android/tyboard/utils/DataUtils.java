@@ -1,7 +1,6 @@
 package com.example.android.tyboard.utils;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.icu.math.BigDecimal;
 import android.util.Log;
 
@@ -22,8 +21,15 @@ public final class DataUtils {
 
     private static final String TAG = DataUtils.class.getSimpleName();
 
-    public static JsonWeatherStore getWeatherStringsFromJson(Context context,
-                                                             String weatherJsonStr)
+    /**
+     * Method to structure API response from OpenWeatherMap.com
+     * Retrieves specific weather information about the
+     * weather situation at the specific time.
+     * @param weatherJsonStr unformatted JSON String
+     * @return JsonWeatherStore Object
+     * @throws JSONException
+     */
+    public static JsonWeatherStore getWeatherStringsFromJson(String weatherJsonStr)
             throws JSONException {
 
         JsonWeatherStore weatherData;
@@ -85,8 +91,15 @@ public final class DataUtils {
         return weatherData;
     }
 
-    public static JsonDirectionsStore getDirectionsStringsFromJson(Context context,
-                                                                   String directionsJsonStr)
+    /**
+     * Method to structure API response from Google API
+     * Structures traffic and distance information
+     * regarding the travel situation between home and work
+     * @param directionsJsonStr - unformatted JSON String
+     * @return JsonDirectionsStore Object
+     * @throws JSONException
+     */
+    public static JsonDirectionsStore getDirectionsStringsFromJson(String directionsJsonStr)
             throws JSONException {
 
         //HashMap<String, Object> directionData = new HashMap<String, Object>();
@@ -133,17 +146,6 @@ public final class DataUtils {
         JSONObject distanceObject = leg.getJSONObject(GDA_DISTANCE);
         JSONObject durationObject = leg.getJSONObject(GDA_DURATION);
         JSONObject durationInTrafficObject = leg.getJSONObject(GDA_DURATION_IN_TRAFFIC);
-        //JSONObject endLocationObject = leg.getJSONObject(GDA_END_LOCATION);
-
-        /*
-        directionData.put("distanceString", distanceObject.getString("text"));
-        directionData.put("durationString", durationObject.getString("text"));
-        directionData.put("durationInTrafficString", durationInTrafficObject.getString("text"));
-        directionData.put("distance", Integer.valueOf(distanceObject.getString("value")));
-        directionData.put("duration", Integer.valueOf(durationObject.getString("value")));
-        directionData.put("durationInTraffic", Integer.valueOf(durationInTrafficObject.getString("value")));
-        directionData.put("summary", summary);
-        */
 
         directionData = new JsonDirectionsStore(
                 distanceObject.getString("text"),
