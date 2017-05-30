@@ -21,8 +21,6 @@ public class SettingsLocationsActivity extends AppCompatActivity implements View
 
     private final static int PLACE_HOME_AUTOCOMPLETE_REQUEST_CODE = 1;
     private final static int PLACE_WORK_AUTOCOMPLETE_REQUEST_CODE = 2;
-    //PlaceAutocompleteFragment mAutocompleteHomeFragment;
-    //PlaceAutocompleteFragment mAutocompleteWorkFragment;
     SharedPreferences sharedPref;
     EditText mHomeAutoCompleteEditText;
     EditText mWorkAutoCompleteEditText;
@@ -36,6 +34,7 @@ public class SettingsLocationsActivity extends AppCompatActivity implements View
         // Set on click listener for auto complete
         mHomeAutoCompleteEditText = (EditText) findViewById(R.id.et_activity_settings_home);
         mWorkAutoCompleteEditText = (EditText) findViewById(R.id.et_activity_settings_work);
+
         mHomeAutoCompleteEditText.setOnClickListener(this);
         mWorkAutoCompleteEditText.setOnClickListener(this);
 

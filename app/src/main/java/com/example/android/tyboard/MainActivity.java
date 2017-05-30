@@ -39,20 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mDirectionsImageView;
     private ProgressBar mDataLoadingProgressBar;
 
-    //private static final String ORIGIN = "248 Louise Ln, San Mateo, 94403 CA";
-    //private static final String DESTINATZION_ZIP = "94103,us";
-    //private static final String DESTINATION = "Brightcove, San Francisco";
-
     private class DirectionsCallback implements LoaderCallbacks<JsonDirectionsStore> {
 
         private SharedPreferences sharedPref;
         private String origin, destination;
-        private int apiCalls;
 
-        public DirectionsCallback(int apiCalls) {
+        public DirectionsCallback() {
             sharedPref = getSharedPreferences(
                     getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
-            this.apiCalls = apiCalls;
 
             origin = sharedPref.getString("homeAddress", "248 Louise Ln, San Mateo, 94403 CA");
             destination = sharedPref.getString("workAddress", "Brightcove, San Francisco");
@@ -64,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 // Member variable to cache directions information in
                 JsonDirectionsStore mDirectionsData = null;
                 String gDirectionsKey;
-                //String[] mDirectionsData = null;
 
 
                 @Override
@@ -163,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoaderReset(Loader<JsonDirectionsStore> loader) {
-
+            joinCallbacks();
         }
 
     }
@@ -172,14 +165,11 @@ public class MainActivity extends AppCompatActivity {
 
         private String destinationLat;
         private String destinationLong;
-        private static final String DESTINATION_ZIP = "94103,us";
         private static final String WEATHER_FORMAT = "imperial";
-        private int apiCalls;
 
-        public WeatherCallback(int apiCalls) {
+        public WeatherCallback() {
             sharedPref = getSharedPreferences(
                     getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
-            this.apiCalls = apiCalls;
 
             destinationLat = sharedPref.getString("workLatitude", "35");
             destinationLong = sharedPref.getString("workLongitude", "139");
@@ -271,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoaderReset(Loader<JsonWeatherStore> loader) {
-
+            joinCallbacks();
         }
 
     }
@@ -302,20 +292,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if this is the first run
         GenUtils.checkFirstRun(this);
+        initiateViews();
+    }
 
-        /*
-         * Hand out ID to Forecast Loader.
-         * Ensuring a loader is initialized and active.
-         */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /**
+        Log.v("MAIN", "onResume Call");
+
+        int apiCalls = 2;
         int directionsLoaderId = DIRECTIONS_LOADER_ID;
         int weatherLoaderId = WEATHER_LOADER_ID;
-        int apiCalls = 0;
 
-        initiateViews();
         hideAllViews();
-
-        apiCalls = 2;
-
         // After both loaders have loaded, the views will
         // be shown through joinCallbacks()
         Bundle bundleForLoader = null;
@@ -323,8 +313,29 @@ public class MainActivity extends AppCompatActivity {
                 .initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(apiCalls));
         Loader weatherLoader = getSupportLoaderManager()
                 .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback(apiCalls));
+         */
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("MAIN", "onStart Call");
 
+        // Load data
+        loadData();
+    }
+
+    private void loadData() {
+        hideAllViews();
+        int directionsLoaderId = DIRECTIONS_LOADER_ID;
+        int weatherLoaderId = WEATHER_LOADER_ID;
+        // After both loaders have loaded, the views will
+        // be shown through joinCallbacks()
+        Bundle bundleForLoader = null;
+        Loader directionsLoader = getSupportLoaderManager()
+                .restartLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback());
+        Loader weatherLoader = getSupportLoaderManager()
+                .restartLoader(weatherLoaderId, bundleForLoader, new WeatherCallback());
     }
 
     /**
@@ -365,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public synchronized void decreaseApiCalls() {
         this.apiCalls--;
+        Log.v("decreaseApiCalls()", "Api Calls: " + getApiCalls());
     }
 
     /**
@@ -372,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public synchronized void increaseApiCalls() {
         this.apiCalls++;
+        Log.v("increaseApiCalls()", "Api Calls: " + getApiCalls());
     }
 
     /**
