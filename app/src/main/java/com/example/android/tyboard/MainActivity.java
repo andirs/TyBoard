@@ -78,11 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 protected void onStartLoading() {
-
-                    // Hide all existing views to load data and add count to apiCalls
-                    // TODO: Needs to be checked if thread-safe solution
-                    increaseApiCalls();
-                    hideAllViews();
                     gDirectionsKey = getString(R.string.com_google_android_directions_API_KEY);
 
                     if (mDirectionsData != null) {
@@ -103,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public JsonDirectionsStore loadInBackground() {
 
+                    // Hide all existing views to load data and add count to apiCalls
+                    // TODO: Needs to be checked if thread-safe solution
+                    increaseApiCalls();
+                    hideAllViews();
                     URL getURL = NetUtils.buildDirectionsUrl(origin, destination, gDirectionsKey, gDepartureTime);
                     try {
                         String jsonDirectionsResponse = NetUtils
@@ -117,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return null;
                     }
+                }
+
+                @Override
+                protected void onStopLoading() {
                 }
 
                 /**
@@ -198,13 +201,9 @@ public class MainActivity extends AppCompatActivity {
                 // Member variable to cache directions information in
                 JsonWeatherStore mWeatherData = null;
                 String oWeatherKey;
-                //String[] mDirectionsData = null;
 
                 @Override
                 protected void onStartLoading() {
-
-                    increaseApiCalls();
-                    hideAllViews();
                     oWeatherKey = getString(R.string.com_openweather_API_KEY);
 
                     if (mWeatherData != null) {
@@ -223,10 +222,9 @@ public class MainActivity extends AppCompatActivity {
                  */
                 @Override
                 public JsonWeatherStore loadInBackground() {
+                    increaseApiCalls();
+                    hideAllViews();
 
-                /*
-                 * Run first trial query:
-                 */
                     URL getURL = NetUtils.buildWeatherUrl(destinationLat, destinationLong, WEATHER_FORMAT, oWeatherKey);
                     try {
                         String jsonWeatherResponse = NetUtils
@@ -241,6 +239,10 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return null;
                     }
+                }
+
+                @Override
+                protected void onStopLoading() {
                 }
 
                 /**
@@ -281,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
         public void onLoaderReset(Loader<JsonWeatherStore> loader) {
             joinCallbacks();
         }
-
     }
 
     @Override
@@ -374,16 +375,14 @@ public class MainActivity extends AppCompatActivity {
         Loader weatherLoader = getSupportLoaderManager()
                 .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback(apiCalls));
          */
+        // Load data
+        loadData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.v("MAIN", "onStart Call");
-
-        // Load data
-        loadData();
-
 
 
         /**
