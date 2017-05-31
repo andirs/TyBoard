@@ -110,9 +110,12 @@ public class MainActivity extends AppCompatActivity {
                         JsonDirectionsStore simpleJsonDirectionsData = DataUtils
                                 .getDirectionsStringsFromJson(jsonDirectionsResponse);
 
+
+
                         return simpleJsonDirectionsData;
 
                     } catch (Exception e) {
+
                         e.printStackTrace();
                         return null;
                     }
@@ -136,6 +139,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<JsonDirectionsStore> loader, JsonDirectionsStore data) {
+
+            // Store in SharedPreferences
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("directionsDistance", data.getDistanceString());
+            editor.putString("directionsFromAddress", origin);
+            editor.putString("directionsToAddress", destination);
+            editor.putString("directionsSummary", data.getSummaryString());
+            editor.putString("directionsPercentageOver", String.valueOf(data.getPercentageOver()));
+            editor.putString("directionsToString", data.toString());
+            editor.putInt("directionsDurationInTraffic", data.getDurationInTraffic());
+            editor.apply();
+
             mDirectionsTextView.setText("From: " + origin + "\n" + "To: " + destination + "\n\n");
 
             // Simple image processing for binary use in bay area
@@ -261,6 +276,17 @@ public class MainActivity extends AppCompatActivity {
         public void onLoadFinished(Loader<JsonWeatherStore> loader, JsonWeatherStore data) {
             //mWeatherTextView.setText("Weather of Lat: " + destinationLat + " Long: " + destinationLong + "\n\n");
 
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("weatherCondition", data.getWeatherCondition());
+            editor.putString("weatherSunrise", data.getSunriseTimeString());
+            editor.putString("weatherSunset", data.getSunsetTimeString());
+            editor.putString("weatherTempMax", Double.toString(data.getTempMaxDouble()));
+            editor.putString("weatherTempMin", Double.toString(data.getTempMinDouble()));
+            editor.putString("weatherTemp", Double.toString(data.getTempDouble()));
+            editor.putInt("weatherId", data.getWeatherIdInt());
+            editor.putString("weatherToString", data.toString());
+            editor.apply();
+
             String weatherFontString = "wi_owm_" + data.getWeatherIdInt();
             int weatherTypeStringId = getResources().getIdentifier(weatherFontString, "string", getPackageName());
 
@@ -312,8 +338,22 @@ public class MainActivity extends AppCompatActivity {
         // Check if this is the first run
         GenUtils.checkFirstRun(this);
         initiateViews();
-        setRecurringLoad();
         // paintDirectionsGraph();
+
+        // Check if the destination has changed otherwise rely on alarm
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+        Boolean changedPreferences = sharedPrefs.getBoolean("changedPreferences", false);
+        if (changedPreferences) {
+            // Load data
+            loadData();
+            setRecurringLoad();
+
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putBoolean("changedPreferences", false);
+            editor.apply();
+        } else {
+            loadSharedPreferences();
+        }
     }
 
     public void paintDirectionsGraph() {
@@ -359,44 +399,88 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /**
-        Log.v("MAIN", "onResume Call");
+    }
 
-        int apiCalls = 2;
-        int directionsLoaderId = DIRECTIONS_LOADER_ID;
-        int weatherLoaderId = WEATHER_LOADER_ID;
+    private void loadSharedPreferences() {
 
-        hideAllViews();
-        // After both loaders have loaded, the views will
-        // be shown through joinCallbacks()
-        Bundle bundleForLoader = null;
-        Loader directionsLoader = getSupportLoaderManager()
-                .initLoader(directionsLoaderId, bundleForLoader, new DirectionsCallback(apiCalls));
-        Loader weatherLoader = getSupportLoaderManager()
-                .initLoader(weatherLoaderId, bundleForLoader, new WeatherCallback(apiCalls));
-         */
-        // Load data
-        loadData();
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
+
+        // Shared Preferences for WeatherView
+        String weatherCondition = sharedPref.getString("weatherCondition", "");
+        String weatherSunrise = sharedPref.getString("weatherSunrise", "");
+        String weatherSunset = sharedPref.getString("weatherSunset", "");
+        String weatherTempMax = sharedPref.getString("weatherTempMax", "");
+        String weatherTempMin = sharedPref.getString("weatherTempMin", "");
+        String weatherTemp = sharedPref.getString("weatherTemp", "");
+        String weatherToString = sharedPref.getString("weatherToString", "");
+        int weatherId = sharedPref.getInt("weatherId", 200);
+
+
+        String weatherFontString = "wi_owm_" + weatherId;
+        int weatherTypeStringId = getResources().getIdentifier(weatherFontString, "string", getPackageName());
+
+        // Set font to display weather icons
+        Typeface iconFont = Typeface.createFromAsset(getAssets(), "fonts/weathericons-regular-webfont.ttf");
+        mWeatherIconTextView.setTypeface(iconFont);
+        mWeatherIconTextView.setText(getResources().getString(weatherTypeStringId));
+
+        // Set temperature display
+        mWeatherTemperatureTextView.setText(weatherTemp + "\u2109");
+        mWeatherTextView.setText(weatherToString);
+
+        mWeatherTempMinMaxTextView.setText(weatherTempMin + " / " + weatherTempMax);
+
+        // Shared Preferences for DirectionsView
+        // Store in SharedPreferences
+        String directionsDistance = sharedPref.getString("directionsDistance", "");
+        String directionsFromAddress = sharedPref.getString("directionsFromAddress", "");
+        String directionsToAddress = sharedPref.getString("directionsToAddress", "");
+        String directionsSummary = sharedPref.getString("directionsSummary", "");
+        String directionsPercentageOver = sharedPref.getString("directionsPercentageOver", "0.0");
+        int directionsDurationInTraffic = sharedPref.getInt("directionsDurationInTraffic", 0);
+        String directionsToString = sharedPref.getString("directionsToString", "");
+
+
+        mDirectionsTextView.setText("From: " + directionsFromAddress + "\n" + "To: " + directionsToAddress + "\n\n");
+
+        // Simple image processing for binary use in bay area
+        // TODO: Come up with generic solution for all US (potentially analyzing legs and showing route images of max 3 longest legs)
+        String summaryString = directionsSummary;
+        if (summaryString.contains("101")) {
+            mDirectionsImageView.setImageResource(R.drawable.ic_us_101_ca_svg);
+        } else if (summaryString.contains("280")) {
+            mDirectionsImageView.setImageResource(R.drawable.ic_2000px_i_280_svg);
+        }
+
+        // Set color of text according to travel time
+        double percentageOver = Double.valueOf(directionsPercentageOver);
+
+
+        if (percentageOver < 20.0) {
+            mDirectionsDurationTrafficTextView.setTextColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorGreen));
+        } else if (percentageOver >= 20.0 && percentageOver < 40.0) {
+            mDirectionsDurationTrafficTextView.setTextColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorYellow));
+        } else if (percentageOver >= 40.0 && percentageOver < 60.0) {
+            mDirectionsDurationTrafficTextView.setTextColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorOrange));
+        } else if (percentageOver >= 60.0) {
+            mDirectionsDurationTrafficTextView.setTextColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorRed));
+        }
+
+        mDirectionsDurationTrafficTextView.setText(
+                String.valueOf((int) (round(directionsDurationInTraffic / (float) 60.0 ,0))));
+        mDirectionsDistanceTextView.setText(directionsDistance);
+        mDirectionsTextView.append(directionsToString);
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.v("MAIN", "onStart Call");
-
-
-        /**
-        graph.getViewport().setXAxisBoundsManual(true);
-        if (series instanceof BarGraphSeries ) {
-            // Shunt the viewport, per v3.1.3 to show the full width of the first and last bars.
-            graph.getViewport().setMinX(series.getLowestValueX() - (xInterval/2.0));
-            graph.getViewport().setMaxX(series.getHighestValueX() + (xInterval/2.0));
-        } else {
-            graph.getViewport().setMinX(series.getLowestValueX() );
-            graph.getViewport().setMaxX(series.getHighestValueX());
-        }
-         */
-
     }
 
 
@@ -409,6 +493,7 @@ public class MainActivity extends AppCompatActivity {
         updateTime.setTimeZone(TimeZone.getTimeZone("GMT-7:00"));
         updateTime.set(Calendar.HOUR_OF_DAY, 7);
         updateTime.set(Calendar.MINUTE, 30);
+        updateTime.add(Calendar.DAY_OF_MONTH, 1);
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -421,6 +506,7 @@ public class MainActivity extends AppCompatActivity {
         this.registerReceiver(receiver, new IntentFilter("com.example.android.tyboard.RELOAD"));
         PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, new Intent("com.example.android.tyboard.RELOAD"), 0);
         AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+
 
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 updateTime.getTimeInMillis(),

@@ -78,4 +78,17 @@ public class JsonWeatherStore {
 
     }
 
+    public String getWeatherCondition() {
+        return descriptionString;
+    }
+
+    public String getSunriseTimeString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+        return sdf.format(sunriseDate);
+    }
+
+    public String getSunsetTimeString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+        return sdf.format(sunsetDate);
+    }
 }

@@ -44,7 +44,7 @@ public class GenUtils {
         String[] stringArray = input.split("\\s+");
         String output = "";
         for (String s : stringArray) {
-            output += Character.toUpperCase(s.charAt(0)) + s.substring(1);
+            output += Character.toUpperCase(s.charAt(0)) + s.substring(1) + " ";
         }
 
         return output;

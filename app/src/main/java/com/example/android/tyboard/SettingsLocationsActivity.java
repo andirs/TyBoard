@@ -77,11 +77,14 @@ public class SettingsLocationsActivity extends AppCompatActivity implements View
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Place place = PlaceAutocomplete.getPlace(this, data);
-        getSharedPreferences(
+        sharedPref = getSharedPreferences(
                 getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
         if (resultCode == RESULT_OK) {
+
+            editor.putBoolean("changedPreferences", true);
+
             switch(requestCode) {
                 case PLACE_HOME_AUTOCOMPLETE_REQUEST_CODE:
                     mHomeAutoCompleteEditText.setText(place.getAddress());
@@ -105,6 +108,10 @@ public class SettingsLocationsActivity extends AppCompatActivity implements View
             Log.i(TAG, status.getStatusMessage());
 
         } else if (resultCode == RESULT_CANCELED) {
+
+            editor.putBoolean("changedPreferences", false);
+            editor.apply();
+
             // The user canceled the operation.
             switch(requestCode) {
                 case PLACE_HOME_AUTOCOMPLETE_REQUEST_CODE:
