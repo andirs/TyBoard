@@ -1,5 +1,7 @@
 package com.example.android.tyboard.data;
 
+import com.example.android.tyboard.utils.GenUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -68,9 +70,9 @@ public class JsonWeatherStore {
     }
 
     public String toString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
 
-        return "Description: " + descriptionString + "\n"
+        return "Weather Condition: " + GenUtils.capitalizeSentence(descriptionString) + "\n"
                 + "Sunrise: " + sdf.format(sunriseDate) + "\n"
                 + "Sunset: " + sdf.format(sunsetDate);
 

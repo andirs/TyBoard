@@ -74,7 +74,7 @@ public final class NetUtils {
      * @param destination our work location to track in the morning
      * @return The URL to use to query the Google API
      */
-    public static URL buildDirectionsUrl(String origin, String destination, String gDirectionsKey) {
+    public static URL buildDirectionsUrl(String origin, String destination, String gDirectionsKey, String gDirectionsDepartureTime) {
 
         // If origin or destination aren't set, return null
         if (origin.isEmpty() || destination.isEmpty())

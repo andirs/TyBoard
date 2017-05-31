@@ -36,6 +36,21 @@ public class GenUtils {
     }
 
     /**
+     * Capitalizes the first letter of every String in a sentence.
+     * @param input String that needs transformation
+     * @return String with capitalized letters in beginning
+     */
+    public static String capitalizeSentence(String input) {
+        String[] stringArray = input.split("\\s+");
+        String output = "";
+        for (String s : stringArray) {
+            output += Character.toUpperCase(s.charAt(0)) + s.substring(1);
+        }
+
+        return output;
+    }
+
+    /**
      * Determines, if app is running for the first time
      * or after an upgrade.
      * @param context the activity context, the app is running in

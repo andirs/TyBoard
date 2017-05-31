@@ -28,9 +28,16 @@ import com.example.android.tyboard.data.JsonWeatherStore;
 import com.example.android.tyboard.utils.DataUtils;
 import com.example.android.tyboard.utils.GenUtils;
 import com.example.android.tyboard.utils.NetUtils;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import static com.example.android.tyboard.utils.DataUtils.round;
@@ -43,13 +50,14 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView, mDirectionsDurationMinTextView;
     private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView, mWeatherTempMinMaxTextView;
+    private BarChart mDirectionsBarChart;
     private ImageView mDirectionsImageView;
     private ProgressBar mDataLoadingProgressBar;
 
     private class DirectionsCallback implements LoaderCallbacks<JsonDirectionsStore> {
 
         private SharedPreferences sharedPref;
-        private String origin, destination;
+        private String origin, destination, gDepartureTime;
 
         public DirectionsCallback() {
             sharedPref = getSharedPreferences(
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
             origin = sharedPref.getString("homeAddress", "248 Louise Ln, San Mateo, 94403 CA");
             destination = sharedPref.getString("workAddress", "Brightcove, San Francisco");
+            gDepartureTime = "now";
         }
 
         @Override
@@ -94,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public JsonDirectionsStore loadInBackground() {
 
-                    URL getURL = NetUtils.buildDirectionsUrl(origin, destination, gDirectionsKey);
+                    URL getURL = NetUtils.buildDirectionsUrl(origin, destination, gDirectionsKey, gDepartureTime);
                     try {
                         String jsonDirectionsResponse = NetUtils
                                 .getResponseFromHttpUrl(getURL);
@@ -303,6 +312,47 @@ public class MainActivity extends AppCompatActivity {
         GenUtils.checkFirstRun(this);
         initiateViews();
         setRecurringLoad();
+        // paintDirectionsGraph();
+    }
+
+    public void paintDirectionsGraph() {
+        List<BarEntry> entries = new ArrayList<BarEntry>();
+
+        entries.add(new BarEntry(7f, 33f));
+        entries.add(new BarEntry(8f, 58f));
+        entries.add(new BarEntry(9f, 72f));
+        entries.add(new BarEntry(10f, 38f));
+        entries.add(new BarEntry(11f, 32f));
+
+        BarDataSet set = new BarDataSet(entries, "Company 1");
+        set.setColors(ContextCompat.getColor(this, R.color.colorPrimary));
+
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        Description desc = new Description();
+        desc.setText("");
+
+        // Disable highlighting and selection
+        mDirectionsBarChart.setPinchZoom(false);
+        mDirectionsBarChart.setScaleEnabled(false);
+        mDirectionsBarChart.setSelected(false);
+        mDirectionsBarChart.setHighlightPerTapEnabled(false);
+        mDirectionsBarChart.setHighlightFullBarEnabled(false);
+
+        mDirectionsBarChart.setDescription(desc);
+        mDirectionsBarChart.setDrawGridBackground(false);
+        mDirectionsBarChart.getAxisLeft().setDrawGridLines(false);
+        mDirectionsBarChart.getXAxis().setDrawGridLines(false);
+        mDirectionsBarChart.getXAxis().setEnabled(false);
+        mDirectionsBarChart.getAxisLeft().setEnabled(false);
+        mDirectionsBarChart.getAxisRight().setEnabled(false);
+
+        mDirectionsBarChart.getAxisLeft().setDrawLabels(false);
+        mDirectionsBarChart.getAxisRight().setDrawLabels(false);
+        mDirectionsBarChart.getLegend().setEnabled(false);
+        mDirectionsBarChart.setData(data);
+        mDirectionsBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mDirectionsBarChart.invalidate(); // refresh
     }
 
     @Override
@@ -333,6 +383,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Load data
         loadData();
+
+
+
+        /**
+        graph.getViewport().setXAxisBoundsManual(true);
+        if (series instanceof BarGraphSeries ) {
+            // Shunt the viewport, per v3.1.3 to show the full width of the first and last bars.
+            graph.getViewport().setMinX(series.getLowestValueX() - (xInterval/2.0));
+            graph.getViewport().setMaxX(series.getHighestValueX() + (xInterval/2.0));
+        } else {
+            graph.getViewport().setMinX(series.getLowestValueX() );
+            graph.getViewport().setMaxX(series.getHighestValueX());
+        }
+         */
+
     }
 
 
@@ -403,11 +468,13 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsImageView = (ImageView) findViewById(R.id.iv_route);
         mDirectionsTextView = (TextView) findViewById(R.id.tv_directions);
         mDirectionsDurationMinTextView = (TextView) findViewById(R.id.tv_duration_with_traffic_min);
+        mDirectionsBarChart = (BarChart) findViewById(R.id.chart);
 
         mWeatherIconTextView = (TextView) findViewById(R.id.tv_weather_icon);
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
         mWeatherTempMinMaxTextView = (TextView) findViewById(R.id.tv_weather_min_max);
+
     }
 
     public void joinCallbacks() {
@@ -450,10 +517,12 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsTextView.setVisibility(View.INVISIBLE);
         mDirectionsDistanceTextView.setVisibility(View.INVISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.INVISIBLE);
+        mDirectionsImageView.setVisibility(View.INVISIBLE);
+        mDirectionsBarChart.setVisibility(View.INVISIBLE);
+
         mWeatherTextView.setVisibility(View.INVISIBLE);
         mWeatherIconTextView.setVisibility(View.INVISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.INVISIBLE);
-        mDirectionsImageView.setVisibility(View.INVISIBLE);
         mWeatherTempMinMaxTextView.setVisibility(View.INVISIBLE);
     }
 
@@ -468,10 +537,12 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsTextView.setVisibility(View.VISIBLE);
         mDirectionsDistanceTextView.setVisibility(View.VISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.VISIBLE);
+        mDirectionsImageView.setVisibility(View.VISIBLE);
+        mDirectionsBarChart.setVisibility(View.VISIBLE);
+
         mWeatherTextView.setVisibility(View.VISIBLE);
         mWeatherIconTextView.setVisibility(View.VISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.VISIBLE);
-        mDirectionsImageView.setVisibility(View.VISIBLE);
         mWeatherTempMinMaxTextView.setVisibility(View.VISIBLE);
     }
 }
