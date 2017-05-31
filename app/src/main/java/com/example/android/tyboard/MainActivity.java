@@ -1,6 +1,11 @@
 package com.example.android.tyboard;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -25,6 +30,8 @@ import com.example.android.tyboard.utils.GenUtils;
 import com.example.android.tyboard.utils.NetUtils;
 
 import java.net.URL;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static com.example.android.tyboard.utils.DataUtils.round;
 
@@ -293,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if this is the first run
         GenUtils.checkFirstRun(this);
         initiateViews();
+        setRecurringLoad(this);
     }
 
     @Override
@@ -323,6 +331,45 @@ public class MainActivity extends AppCompatActivity {
 
         // Load data
         loadData();
+    }
+
+    private void setRecurringLoad(Context context) {
+        Calendar updateTime = Calendar.getInstance();
+        updateTime.setTimeZone(TimeZone.getTimeZone("GMT-7:00"));
+        updateTime.set(Calendar.HOUR_OF_DAY, 17);
+        updateTime.set(Calendar.MINUTE, 02);
+        Intent intent = new Intent(context, UpdateTask.class);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadData();
+                context.unregisterReceiver(this);
+            }
+        };
+
+        this.registerReceiver(receiver, new IntentFilter("com.example.android.tyboard.RELOAD"));
+        PendingIntent pintent = PendingIntent.getBroadcast(this, 0, new Intent("com.example.android.tyboard.RELOAD"), 0);
+        AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+        // set alarm to fire 5 sec (1000*5) from now (SystemClock.elapsedRealtime())
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                updateTime.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pintent);
+
+        /**
+
+
+
+        PendingIntent recurringUpdate = PendingIntent.getBroadcast(context,
+                0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        AlarmManager alarms = (AlarmManager) this.getSystemService(
+                Context.ALARM_SERVICE);
+
+        alarms.setRepeating(AlarmManager.RTC_WAKEUP,
+                updateTime.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, recurringUpdate);
+         */
     }
 
     private void loadData() {
