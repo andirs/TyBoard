@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private int apiCalls;
 
     private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView, mDirectionsDurationMinTextView;
-    private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView;
+    private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView, mWeatherTempMinMaxTextView;
     private ImageView mDirectionsImageView;
     private ProgressBar mDataLoadingProgressBar;
 
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<JsonWeatherStore> loader, JsonWeatherStore data) {
-            mWeatherTextView.setText("Weather of Lat: " + destinationLat + " Long: " + destinationLong + "\n\n");
+            //mWeatherTextView.setText("Weather of Lat: " + destinationLat + " Long: " + destinationLong + "\n\n");
 
             String weatherFontString = "wi_owm_" + data.getWeatherIdInt();
             int weatherTypeStringId = getResources().getIdentifier(weatherFontString, "string", getPackageName());
@@ -260,7 +260,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Set temperature display
             mWeatherTemperatureTextView.setText(String.valueOf(data.getTempDouble()) + "\u2109");
-            mWeatherTextView.append(data.toString());
+            mWeatherTextView.setText(data.toString());
+
+            mWeatherTempMinMaxTextView.setText(data.getTempMinDouble() + " / " + data.getTempMaxDouble());
 
             // Show all views after loading
             joinCallbacks();
@@ -300,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if this is the first run
         GenUtils.checkFirstRun(this);
         initiateViews();
-        setRecurringLoad(this);
+        setRecurringLoad();
     }
 
     @Override
@@ -333,12 +335,16 @@ public class MainActivity extends AppCompatActivity {
         loadData();
     }
 
-    private void setRecurringLoad(Context context) {
+
+    /**
+     * Update method that sets timer to 7.30am in the morning.
+     * TODO: Needs a link to settings and automated TimeZone detection
+     */
+    private void setRecurringLoad() {
         Calendar updateTime = Calendar.getInstance();
         updateTime.setTimeZone(TimeZone.getTimeZone("GMT-7:00"));
-        updateTime.set(Calendar.HOUR_OF_DAY, 17);
-        updateTime.set(Calendar.MINUTE, 02);
-        Intent intent = new Intent(context, UpdateTask.class);
+        updateTime.set(Calendar.HOUR_OF_DAY, 7);
+        updateTime.set(Calendar.MINUTE, 30);
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -349,12 +355,12 @@ public class MainActivity extends AppCompatActivity {
         };
 
         this.registerReceiver(receiver, new IntentFilter("com.example.android.tyboard.RELOAD"));
-        PendingIntent pintent = PendingIntent.getBroadcast(this, 0, new Intent("com.example.android.tyboard.RELOAD"), 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, new Intent("com.example.android.tyboard.RELOAD"), 0);
         AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
-        // set alarm to fire 5 sec (1000*5) from now (SystemClock.elapsedRealtime())
+
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 updateTime.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pintent);
+                AlarmManager.INTERVAL_DAY, pIntent);
 
         /**
 
@@ -401,6 +407,7 @@ public class MainActivity extends AppCompatActivity {
         mWeatherIconTextView = (TextView) findViewById(R.id.tv_weather_icon);
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
+        mWeatherTempMinMaxTextView = (TextView) findViewById(R.id.tv_weather_min_max);
     }
 
     public void joinCallbacks() {
@@ -447,6 +454,7 @@ public class MainActivity extends AppCompatActivity {
         mWeatherIconTextView.setVisibility(View.INVISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.INVISIBLE);
         mDirectionsImageView.setVisibility(View.INVISIBLE);
+        mWeatherTempMinMaxTextView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -464,5 +472,6 @@ public class MainActivity extends AppCompatActivity {
         mWeatherIconTextView.setVisibility(View.VISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.VISIBLE);
         mDirectionsImageView.setVisibility(View.VISIBLE);
+        mWeatherTempMinMaxTextView.setVisibility(View.VISIBLE);
     }
 }

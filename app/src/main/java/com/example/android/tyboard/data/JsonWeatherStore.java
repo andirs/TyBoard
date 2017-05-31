@@ -1,5 +1,6 @@
 package com.example.android.tyboard.data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -58,11 +59,20 @@ public class JsonWeatherStore {
         return tempDouble;
     }
 
+    public double getTempMinDouble() {
+        return tempMinDouble;
+    }
+
+    public double getTempMaxDouble() {
+        return tempMaxDouble;
+    }
+
     public String toString() {
-        return "Temperature: " + tempDouble + "F \n"
-                + "Description: " + descriptionString + "\n"
-                + "Sunrise: " + sunriseDate.toString() + "\n"
-                + "Sunset: " + sunsetDate.toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+        return "Description: " + descriptionString + "\n"
+                + "Sunrise: " + sdf.format(sunriseDate) + "\n"
+                + "Sunset: " + sdf.format(sunsetDate);
 
     }
 
