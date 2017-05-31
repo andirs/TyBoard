@@ -18,9 +18,6 @@ public final class NetUtils {
 
     private static final String TAG = NetUtils.class.getSimpleName();
 
-    // Example URL
-    // https://maps.googleapis.com/maps/api/directions/json?origin=248+Louise+Lane+San+Mateo+CA&destination=Brightcove+San+Francisco&departure_time=now&traffic_model=best_guess&key=AIzaSyDWdsDqlar0n9iV2tIB7Gb_G9iNV1P4K8E
-
     private static final String GOOGLE_DIRECTIONS_BASE_URL = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_DIRECTIONS_ORIGIN_PARAM = "origin";
     private static final String GOOGLE_DIRECTIONS_DESTINATION_PARAM = "destination";
