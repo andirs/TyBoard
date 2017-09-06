@@ -493,6 +493,8 @@ public class MainActivity extends AppCompatActivity {
         updateTime.setTimeZone(TimeZone.getTimeZone("GMT-7:00"));
         updateTime.set(Calendar.HOUR_OF_DAY, 7);
         updateTime.set(Calendar.MINUTE, 30);
+
+        // Add one day to update time to fire update the next morning and not instantly
         updateTime.add(Calendar.DAY_OF_MONTH, 1);
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -511,27 +513,13 @@ public class MainActivity extends AppCompatActivity {
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 updateTime.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pIntent);
-
-        /**
-
-
-
-        PendingIntent recurringUpdate = PendingIntent.getBroadcast(context,
-                0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        AlarmManager alarms = (AlarmManager) this.getSystemService(
-                Context.ALARM_SERVICE);
-
-        alarms.setRepeating(AlarmManager.RTC_WAKEUP,
-                updateTime.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, recurringUpdate);
-         */
     }
 
     private void loadData() {
         hideAllViews();
         int directionsLoaderId = DIRECTIONS_LOADER_ID;
         int weatherLoaderId = WEATHER_LOADER_ID;
+
         // After both loaders have loaded, the views will
         // be shown through joinCallbacks()
         Bundle bundleForLoader = null;
