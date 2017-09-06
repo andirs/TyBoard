@@ -2,7 +2,7 @@
 Software for an ongoing smart mirror project. App combines information from [OpenWeatherMap API](https://openweathermap.org/) and [Google Directions API](https://developers.google.com/maps/documentation/directions/) to give a brief overview of the current weather and traffic situation. Updates every morning at 7.30AM local time.
 
 ## Inspiration
-This app was created to answer some of my wifes most frequent questions in the morning ;) - I drew inspiration from Max Braun's post on [Medium](https://medium.com/@maxbraun/my-bathroom-mirror-is-smarter-than-yours-94b21c6671ba) and Becky Stern's take on an [Android based smart-mirror](http://lifehacker.com/build-your-own-smart-mirror-with-a-two-way-mirror-and-1739447316). 
+This app was created to answer some of my wifes most frequent questions in the morning ;) - I drew inspiration from Max Braun's post on [Medium](https://medium.com/@maxbraun/my-bathroom-mirror-is-smarter-than-yours-94b21c6671ba) and Becky Stern's take on an [Android based smart-mirror](https://learn.adafruit.com/android-smart-home-mirror). 
 
 ## Application Layout
 The app holds a very basic constraint layout. 
