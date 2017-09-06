@@ -17,8 +17,10 @@ The app holds a very basic constraint layout.
 - Needs OpenWeatherMap, Google Geo and Google Directions API Key
 - Min SDK 15, Target SDK 25
 
-[[https://github.com/andirs/TyBoard/blob/master/doc/img/01main.png|alt=main]]
-
-[[https://github.com/andirs/TyBoard/blob/master/doc/img/02settings.png|alt=settings]]
-
-[[https://github.com/andirs/TyBoard/blob/master/doc/img/03settings_autofill.png|alt=autocomplete]]
+## Screenshots
+This is how the app looks currently.
+<div>
+  <img src="https://github.com/andirs/TyBoard/blob/master/doc/img/01main.png" alt="Main Page" width="200">
+  <img src="https://github.com/andirs/TyBoard/blob/master/doc/img/02settings.png" alt="Settings" width="200">
+  <img src="https://github.com/andirs/TyBoard/blob/master/doc/img/03settings_autofill.png" alt="Settings Page Autofill" width="200">
+</div>
