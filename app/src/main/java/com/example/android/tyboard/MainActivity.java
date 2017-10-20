@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -34,10 +35,17 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.TimeZone;
 
 import static com.example.android.tyboard.utils.DataUtils.round;
@@ -354,6 +362,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             loadSharedPreferences();
         }
+
+        Set<String> germanWords = sharedPrefs.getStringSet("germanWords", null);
+        String randomWord = "";
+
+        if (germanWords == null) {
+            // load german words from disc
+            germanWords = loadFromDisc("german_words");
+        }
+
+        randomWord = pickRandomWord(germanWords);
+        Log.v("RANDOM WORD", randomWord);
+
     }
 
     public void paintDirectionsGraph() {
@@ -481,6 +501,47 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.v("MAIN", "onStart Call");
+    }
+
+    public String pickRandomWord(Set<String> set) {
+        Random rand = new Random();
+        int randomInt = rand.nextInt(set.size());
+        System.out.println(randomInt);
+        int i = 0;
+        String randomWord = "";
+        for (String s : set) {
+            if (i == randomInt) {
+                // print out word and remove from set
+                randomWord = s;
+            }
+            i++;
+        }
+
+        return randomWord;
+    }
+
+    public HashSet<String> loadFromDisc(String fileName) {
+        HashSet<String> set = new HashSet<String>();
+        AssetManager am = getBaseContext().getAssets();
+
+        try {
+            InputStream is = am.open(fileName);
+            //InputStream is = new FileInputStream(fileName);
+            InputStreamReader ireader = new InputStreamReader(is);
+            BufferedReader breader = new BufferedReader(ireader);
+            String line;
+
+            while ((line = breader.readLine()) != null) {
+                set.add(line);
+            }
+
+            breader.close();
+
+        } catch (IOException e) {
+            System.out.println("Whoops, that wen't wrong. Couldn't load file");
+        }
+
+        return set;
     }
 
 
