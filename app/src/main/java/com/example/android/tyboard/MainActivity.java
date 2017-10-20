@@ -363,16 +363,23 @@ public class MainActivity extends AppCompatActivity {
             loadSharedPreferences();
         }
 
+        // Get random word
         Set<String> germanWords = sharedPrefs.getStringSet("germanWords", null);
         String randomWord = "";
 
         if (germanWords == null) {
             // load german words from disc
-            germanWords = loadFromDisc("german_words");
+            germanWords = loadFromDisc("german_words.txt");
         }
 
         randomWord = pickRandomWord(germanWords);
         Log.v("RANDOM WORD", randomWord);
+        // Remove word for uniqueness
+        germanWords.remove(randomWord);
+
+        // Store set in SharedPreferences
+        SharedPreferences.Editor edit = sharedPrefs.edit();
+        edit.putStringSet("germanWords", germanWords);
 
     }
 
