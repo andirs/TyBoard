@@ -1,4 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.tyboard.MainActivity"
+    android:layout_gravity="end"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <TextView
+        android:id="@+id/tv_weather_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:text="72 F"
+        android:gravity="end"
+        android:textAlignment="viewEnd"
+
+        android:textColor="@color/colorPrimary"
+        android:textSize="52sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toLeftOf="@+id/tv_weather_icon"
+        android:layout_marginRight="8dp" />
+
+    <View
+        android:id="@+id/divisor_one"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#FFFFFF"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_weather_temperature" />
+
+
+    <View
+        android:id="@+id/divisor_two"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#FFFFFF"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_weather_min_max" />
+
+    <View
+        android:id="@+id/divisor_three"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#FFFFFF"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tl_directions" />
+
+    <View
+        android:id="@+id/divisor_four"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#FFFFFF"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_directions" />
+
+    <TextView
+        android:id="@+id/tv_german_word"
+        android:layout_width="152dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Frühstück"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divisor_four"
+        tools:layout_editor_absoluteX="8dp" />
+
+    <TextView
+        android:id="@+id/tv_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:text="Lorem Ipsum weather und co \n hahaha"
+        android:gravity="end"
+        android:textAlignment="textEnd"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/divisor_one" />
+
+    <TextView
+        android:id="@+id/tv_weather_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wi_owm_200"
+        android:textColor="@color/colorPrimary"
+        android:textSize="52sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="8dp" />
+
+    <ImageView
+        android:id="@+id/iv_route"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/ic_us_101_ca_svg"
+        app:layout_constraintRight_toLeftOf="@+id/tl_directions"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/divisor_two"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/divisor_three" />
+
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lhjsd"
+        android:visibility="gone"
+        app:layout_constraintLeft_toRightOf="@+id/tl_directions"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_route"
+        app:layout_constraintHorizontal_bias="0.545" />
+
+    <TableLayout
+        android:id="@+id/tl_directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="end"
+        android:layout_marginRight="7dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/divisor_two"
+        android:layout_marginEnd="7dp">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_duration_with_traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:fontFamily="sans-serif-thin"
+                android:text="33 mins"
+                android:textColor="@color/colorAccent"
+                android:textSize="52sp" />
+
+            <TextView
+                android:id="@+id/tv_duration_with_traffic_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_gravity="top"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="top"
+                android:text="@string/tv_duration_with_traffic_min_std"
+                android:textSize="22sp" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/tv_weather_min_max"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="min_max"
+        android:layout_marginRight="5dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_weather"
+        android:layout_marginEnd="5dp" />
+
+    <ProgressBar
+        android:id="@+id/pb_data_loading"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tv_directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="Lorem Ipsum directions und co \n hahaha"
+        android:textAlignment="textEnd"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/divisor_three" />
+
+
+</android.support.constraint.ConstraintLayout>
+
+<!--
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_weather_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wi_owm_200"
+            android:textColor="@color/colorPrimary"
+            android:textSize="52sp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="162dp" />
+
+        <TextView
+            android:id="@+id/tv_weather_min_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="lhjsd" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test"/>
+
+</LinearLayout> -->
+<!--
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +250,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- General Layout Container-->
+        // General Layout Container->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -84,7 +326,7 @@
 
             </LinearLayout>
 
-            <!-- Directions Layout Container-->
+            // Directions Layout Container->
 
 
 
@@ -121,7 +363,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/sv_directions" />
 
-            <!-- Weather Layout Container-->
+            // Weather Layout Container->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,4 +431,4 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </LinearLayout>
+    </LinearLayout>-->

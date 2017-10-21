@@ -55,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int DIRECTIONS_LOADER_ID = 0;
     private static final int WEATHER_LOADER_ID = 23;
     private int apiCalls;
+    private String randomWord;
 
     private TextView mDirectionsTextView, mDirectionsDistanceTextView, mDirectionsDurationTrafficTextView, mDirectionsDurationMinTextView;
     private TextView mWeatherTextView, mWeatherIconTextView, mWeatherTemperatureTextView, mWeatherTempMinMaxTextView;
+    private TextView mRandomWordTextView;
+    private View mHorizontalLineOne, mHorizontalLineTwo, mHorizontalLineThree, mHorizontalLineFour;
     private BarChart mDirectionsBarChart;
     private ImageView mDirectionsImageView;
     private ProgressBar mDataLoadingProgressBar;
@@ -341,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_right);
 
         // Check if this is the first run
         GenUtils.checkFirstRun(this);
@@ -363,24 +366,27 @@ public class MainActivity extends AppCompatActivity {
             loadSharedPreferences();
         }
 
-        // Get random word
+    }
+
+    public String getRandomWord(Context context) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(getString(R.string.shared_preferences_settings_key), MODE_PRIVATE);
         Set<String> germanWords = sharedPrefs.getStringSet("germanWords", null);
-        String randomWord = "";
+        String word = "";
 
         if (germanWords == null) {
             // load german words from disc
             germanWords = loadFromDisc("german_words.txt");
         }
 
-        randomWord = pickRandomWord(germanWords);
-        Log.v("RANDOM WORD", randomWord);
+        word = pickRandomWord(germanWords);
+        Log.v("RANDOM WORD", word);
         // Remove word for uniqueness
-        germanWords.remove(randomWord);
+        germanWords.remove(word);
 
         // Store set in SharedPreferences
         SharedPreferences.Editor edit = sharedPrefs.edit();
         edit.putStringSet("germanWords", germanWords);
-
+        return word;
     }
 
     public void paintDirectionsGraph() {
@@ -587,6 +593,8 @@ public class MainActivity extends AppCompatActivity {
         hideAllViews();
         int directionsLoaderId = DIRECTIONS_LOADER_ID;
         int weatherLoaderId = WEATHER_LOADER_ID;
+        randomWord = getRandomWord(this);
+        mRandomWordTextView.setText(randomWord);
 
         // After both loaders have loaded, the views will
         // be shown through joinCallbacks()
@@ -615,6 +623,11 @@ public class MainActivity extends AppCompatActivity {
         mWeatherTemperatureTextView = (TextView) findViewById(R.id.tv_weather_temperature);
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather);
         mWeatherTempMinMaxTextView = (TextView) findViewById(R.id.tv_weather_min_max);
+        mRandomWordTextView = (TextView) findViewById(R.id.tv_german_word);
+        mHorizontalLineOne = (View) findViewById(R.id.divisor_one);
+        mHorizontalLineTwo = (View) findViewById(R.id.divisor_two);
+        mHorizontalLineThree = (View) findViewById(R.id.divisor_three);
+        mHorizontalLineFour = (View) findViewById(R.id.divisor_four);
 
     }
 
@@ -659,12 +672,17 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsDistanceTextView.setVisibility(View.INVISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.INVISIBLE);
         mDirectionsImageView.setVisibility(View.INVISIBLE);
-        mDirectionsBarChart.setVisibility(View.INVISIBLE);
+        //mDirectionsBarChart.setVisibility(View.INVISIBLE);
 
         mWeatherTextView.setVisibility(View.INVISIBLE);
         mWeatherIconTextView.setVisibility(View.INVISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.INVISIBLE);
         mWeatherTempMinMaxTextView.setVisibility(View.INVISIBLE);
+        mRandomWordTextView.setVisibility(View.INVISIBLE);
+        mHorizontalLineOne.setVisibility(View.INVISIBLE);
+        mHorizontalLineTwo.setVisibility(View.INVISIBLE);
+        mHorizontalLineThree.setVisibility(View.INVISIBLE);
+        mHorizontalLineFour.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -679,11 +697,16 @@ public class MainActivity extends AppCompatActivity {
         mDirectionsDistanceTextView.setVisibility(View.VISIBLE);
         mDirectionsDurationTrafficTextView.setVisibility(View.VISIBLE);
         mDirectionsImageView.setVisibility(View.VISIBLE);
-        mDirectionsBarChart.setVisibility(View.VISIBLE);
+        //mDirectionsBarChart.setVisibility(View.VISIBLE);
 
         mWeatherTextView.setVisibility(View.VISIBLE);
         mWeatherIconTextView.setVisibility(View.VISIBLE);
         mWeatherTemperatureTextView.setVisibility(View.VISIBLE);
         mWeatherTempMinMaxTextView.setVisibility(View.VISIBLE);
+        mRandomWordTextView.setVisibility(View.VISIBLE);
+        mHorizontalLineOne.setVisibility(View.VISIBLE);
+        mHorizontalLineTwo.setVisibility(View.VISIBLE);
+        mHorizontalLineThree.setVisibility(View.VISIBLE);
+        mHorizontalLineFour.setVisibility(View.VISIBLE);
     }
 }
